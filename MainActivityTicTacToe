@@ -1,0 +1,98 @@
+package com.example.test;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.media.Image;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    boolean gameActive = true;
+    // 0 - X
+    // 1 - O
+    // 2 - blank
+
+    int activePlayer = 0 ;
+    // This integer array contains all the present states of the game
+    int[] gameState = {2 , 2, 2, 2, 2 ,2 ,2 ,2 ,2 } ;
+
+    // This 2d array contains all the possible winning positions
+    int [][] winPositions = {{0,1,2} , {3,4,5} , {6 ,7 ,8} ,
+                            {0 , 3 , 6} , {1 , 4 ,7} , {2 ,5 , 8} ,
+                            {0 , 4 , 8} , {2 , 4 , 6}} ;
+    public void playerTap(View view) {
+        ImageView imag = (ImageView) view ;
+        int tappedImage = Integer.parseInt(imag.getTag().toString()) ;
+        if(!gameActive) {
+            gameReset(view) ;
+        }
+        if(gameState[tappedImage] == 2) {
+            gameState[tappedImage] = activePlayer ;
+            imag.setTranslationY(-1000f) ;
+            // once the player has played then the active player becomes the 2 player playing
+            if(activePlayer == 0)  {
+                imag.setImageResource(R.drawable.x);
+                activePlayer = 1 ;
+                TextView statusBar = findViewById(R.id.statusBar) ;
+                statusBar.setText("O's turn - Tap To Play") ;
+            }
+            else {
+                imag.setImageResource(R.drawable.cirle);
+                activePlayer = 0 ;
+                TextView statusBar = findViewById(R.id.statusBar) ;
+                statusBar.setText("X's turn - Tap To Play") ;
+            }
+            imag.animate().translationYBy(1000f).setDuration(300);
+
+        }
+
+        // we need to iterate over all the wining states and check the current game state , which state it has acquired
+        // when somebody wins the game then we have to change the status bar , we need to show who won the game
+        String winstr ;
+        for(int[] winpositions : winPositions) {
+            if(gameState[winpositions[0]] == gameState[winpositions[1]] && gameState[winpositions[1]] == gameState[winpositions[2]] && gameState[winpositions[0]] !=2) {
+                gameActive = false ;
+                if (gameState[winpositions[0]] == 0) {
+                    // x wins the game
+                    winstr = "X Won The Game ! ";
+                } else {
+                    // o wins the game
+                    winstr = "Y Won The Game ! ";
+                }
+                TextView status = findViewById(R.id.statusBar) ;
+                status.setText(winstr) ;
+            }
+        }
+
+
+    }
+
+    public void gameReset(View view) {
+        gameActive = true ;
+        activePlayer = 0 ;
+        for(int i = 0 ; i < gameState.length ; i++ ) {
+            gameState[i] = 2 ;
+        }
+
+        ((ImageView)findViewById(R.id.imageView)).setImageResource(0) ;
+        ((ImageView)findViewById(R.id.imageView2)).setImageResource(0) ;
+        ((ImageView)findViewById(R.id.imageView3)).setImageResource(0) ;
+        ((ImageView)findViewById(R.id.imageView4)).setImageResource(0) ;
+        ((ImageView)findViewById(R.id.imageView5)).setImageResource(0) ;
+        ((ImageView)findViewById(R.id.imageView6)).setImageResource(0) ;
+        ((ImageView)findViewById(R.id.imageView7)).setImageResource(0);
+        ((ImageView)findViewById(R.id.imageView8)).setImageResource(0);
+        ((ImageView)findViewById(R.id.imageView9)).setImageResource(0);
+
+        TextView status = findViewById(R.id.statusBar) ;
+        status.setText("X's Turn - Tap To Play");
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+    }
+}
